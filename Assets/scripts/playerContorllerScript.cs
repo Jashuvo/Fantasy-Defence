@@ -8,6 +8,9 @@ public class playerContorllerScript : MonoBehaviour
     private Animator anim;
     private float speed;
     private Vector3 direction;
+    private Vector3 currentLookTarget = Vector3.zero;
+    [SerializeField]
+    private LayerMask myLayer;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,5 +43,27 @@ public class playerContorllerScript : MonoBehaviour
         {
             anim.SetBool("chop", false);
         }
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray,out hit, 500 , myLayer,QueryTriggerInteraction.Ignore ))
+        {
+            if (hit.point != null)
+            {
+                currentLookTarget = hit.point;
+            }
+
+            Vector3 targetPosition = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+            Quaternion rotation = Quaternion.LookRotation(targetPosition - transform.position);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 10);
+        }
     }
+
+    
+
+   
+
+
 }
